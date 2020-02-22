@@ -14,7 +14,7 @@
   - ./async_server
   
 * In a new terminal, start a telnet client application 
-  - telnet 127.0.0.1 1234 (the IP and port address is set in async_server.cpp file)
+  - telnet 127.0.0.1 1234 (the IP and port are set in async_server.cpp file)
  * The server should echo whatever is sent from the client.
  * Create multiple telnet connections with the server simultaneuously.
    - telnet 127.0.0.*x* 1234  (where *x* is between 0 and 255)
