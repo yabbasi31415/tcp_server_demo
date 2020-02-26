@@ -1,16 +1,19 @@
 # tcp_server_demo
 
 * A TCP echo server in C++ that supports multiple simultaneuos clients.
-* Uses Boost Asio library.
-* Server implementation is based on this [example](https://www.codeproject.com/Articles/1264257/Socket-Programming-in-Cplusplus-using-boost-asio-T).
+* Server implementation is based on this [example](https://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/example/cpp11/echo/async_tcp_echo_server.cpp) from Boost ASIO library (compatible with Version 1.65.1).
+* Async timer added to the file but not in use
 
 ### How to Run
 * Get Boost ASIO library and g++ compiler for Linux
   - sudo apt-get install libboost-all-dev  
   - sudo apt-get install g++
   
-* Compile and run the server
-  - g++ async_server.cpp -o async_server -lboost_system
+* Run make
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
   - ./async_server
   
 * In a new terminal, start a telnet client application 
