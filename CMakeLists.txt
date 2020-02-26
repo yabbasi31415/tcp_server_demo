@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)  # CMake version check
-project(async_server)               # Create project "simple_example"
-set(CMAKE_CXX_STANDARD 17)            # Enable c++14 standard
+project(async_server)               # Create project 
+set(CMAKE_CXX_STANDARD 17)            # Enable c++17 standard
 
-# Add main.cpp file of project root directory as source file
+# Add async_server.cpp file of project root directory as source file
 set(SOURCE_FILES async_server.cpp)
 
 # Add executable target with source files listed in SOURCE_FILES variable
