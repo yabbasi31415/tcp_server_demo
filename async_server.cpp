@@ -10,6 +10,8 @@
 
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread.hpp> 
+#include <boost/date_time/posix_time/posix_time_io.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -18,15 +20,18 @@
 using namespace std;
 using boost::asio::ip::tcp;
 
-// void print(const boost::system::error_code & /*e*/) {
-//   cout << "Echo Server Started" << endl;
-// }
+void print() 
+{
+  cout << "Echo Server Started" << endl;
+}
+
+#define WAIT_TIME_SECONDS  3
 
 class server {
 public:
   server(boost::asio::io_service &io_service, short port)
       : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
-        socket_(io_service), timer_(io_service, boost::posix_time::seconds(2)) {
+        socket_(io_service), timer_(io_service, boost::posix_time::seconds(WAIT_TIME_SECONDS)) {
     do_accept();
   }
 
@@ -46,6 +51,7 @@ private:
         [this](boost::system::error_code ec, std::size_t length) {
           if (!ec) {
             cout << "Server received: " << data_ << endl;
+            timer_.expires_from_now(boost::posix_time::seconds(WAIT_TIME_SECONDS));
             timer_.async_wait(std::bind(&server::timeout, this,
                                         std::placeholders::_1, length));
           }
@@ -78,6 +84,7 @@ private:
 
 int main() {
   try {
+    print();
     boost::asio::io_service io_service;
     server s(io_service, 1234);
 
