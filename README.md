@@ -2,7 +2,7 @@
 
 * A TCP echo server in C++ that supports multiple simultaneuos clients.
 * Server implementation is based on this [example](https://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/example/cpp11/echo/async_tcp_echo_server.cpp) from Boost ASIO library (compatible with Version 1.65.1).
-* Async timer added to the file but not in use
+* Async timer added between read from socket and write to socket operations
 
 ### How to Run
 * Get Boost ASIO library and g++ compiler for Linux
@@ -15,6 +15,8 @@
   - cmake ..
   - make
   - ./async_server
+
+* Wait time between read and write set to 3 seconds. Change the macro `WAIT_TIME_SECONDS` value to set a new wait time. 
   
 * In a new terminal, start a telnet client application 
   - telnet 127.0.0.1 1234 (the IP and port are set in async_server.cpp file)
