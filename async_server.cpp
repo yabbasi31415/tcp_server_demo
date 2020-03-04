@@ -5,12 +5,12 @@
 
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread.hpp> 
 #include <boost/date_time/posix_time/posix_time_io.hpp>
+#include <boost/thread.hpp>
 #include <cstdlib>
 #include <iostream>
-#include <memory>
 #include <list>
+#include <memory>
 #include <utility>
 
 using namespace std;
@@ -26,26 +26,29 @@ public:
 
 private:
   void do_accept() {
-    auto socket_ = make_unique<tcp::socket>(io_service_);
-    acceptor_.async_accept(*socket_,
-                           [this, &socket_](boost::system::error_code ec) {
-                             if (!ec) {
-                               socket_list_.push_back(std::move(socket_));
-                               do_read(socket_list_.back());
-                             }
-                             do_accept();
-                           });
+    auto socket_ = new tcp::socket(io_service_);
+    acceptor_.async_accept(*socket_, std::bind(&server::on_accept, this,
+                                               std::placeholders::_1, socket_));
   }
 
-  void do_read(unique_ptr<tcp::socket> &socket_) {
+  void on_accept(boost::system::error_code ec, tcp::socket *socket_) {
+    if (!ec) {
+      socket_list_.push_back(socket_);
+      do_read(socket_list_.back());
+    }
+    do_accept();
+  }
+
+  void do_read(tcp::socket *&socket_) {
+    std::cout << "socket_3: " << socket_ << std::endl;
     socket_->async_read_some(
         boost::asio::buffer(data_, max_length),
         [this, &socket_](boost::system::error_code ec, std::size_t length) {
           if (!ec) {
             cout << "Server received: " << data_ << endl;
             // write to all other sockets
-            for(auto it = socket_list_.begin(); it != socket_list_.end(); ++it)
-            {
+            for (auto it = socket_list_.begin(); it != socket_list_.end();
+                 ++it) {
               do_write(*it, length);
             }
           }
@@ -53,7 +56,7 @@ private:
         });
   }
 
-  void do_write(const unique_ptr<tcp::socket> &socket_, std::size_t length) {
+  void do_write(tcp::socket *socket_, std::size_t length) {
     boost::asio::async_write(
         *socket_, boost::asio::buffer(data_, length),
         [this](boost::system::error_code ec, std::size_t /*length*/) {
@@ -64,7 +67,7 @@ private:
   }
 
   tcp::acceptor acceptor_;
-  list<unique_ptr<tcp::socket>> socket_list_;
+  list<tcp::socket *> socket_list_;
   boost::asio::io_service &io_service_;
 
   enum { max_length = 1024 };
